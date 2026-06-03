@@ -196,7 +196,7 @@ const LEVELS = [
 ];
   </script>
 
-  <!-- React component code: only ~15KB, well under Babel 500KB limit -->
+    <!-- React component code: only ~15KB, well under Babel 500KB limit -->
   <script type="text/babel" data-presets="react">
 const { useState, useEffect, useCallback, useRef } = React;
 
@@ -216,18 +216,17 @@ const AC = {
   "Yin Yang":"#e2e8f0",
 };
 
-/* ── Storage (localStorage, works everywhere) ─────────────────────────────── */
 const store={
   get(k){try{return localStorage.getItem(k);}catch{return null;}},
   set(k,v){try{localStorage.setItem(k,v);}catch{}}
 };
 
 function App(){
-  const [col,setCol]         = useState({});
-  const [coll,setColl]       = useState({});
-  const [loaded,setLoaded]   = useState(false);
-  const [search,setSearch]   = useState('');
-  const [filter,setFilter]   = useState('all');
+  const [col,setCol]       = useState({});
+  const [coll,setColl]     = useState({});
+  const [loaded,setLoaded] = useState(false);
+  const [search,setSearch] = useState('');
+  const [filter,setFilter] = useState('all');
   const fileRef = useRef();
 
   useEffect(()=>{
@@ -238,11 +237,11 @@ function App(){
     setLoaded(true);
   },[]);
 
-  const saveCol=useCallback((v)=>{setCol(v);store.set('gvb5-col',JSON.stringify(v));},[]);
+  const saveCol =useCallback((v)=>{setCol(v); store.set('gvb5-col', JSON.stringify(v));},[]);
   const saveColl=useCallback((v)=>{setColl(v);store.set('gvb5-coll',JSON.stringify(v));},[]);
 
-  const isDone   = useCallback((li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`]),[col]);
-  const slotsDone= useCallback((li)=>LEVELS[li].s.filter((_,si)=>col[`${li}-${si}`]).length,[col]);
+  const isDone   =useCallback((li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`]),[col]);
+  const slotsDone=useCallback((li)=>LEVELS[li].s.filter((_,si)=>col[`${li}-${si}`]).length,[col]);
 
   const toggle=(li,si)=>saveCol({...col,[`${li}-${si}`]:!col[`${li}-${si}`]});
   const markDone=(li)=>{
@@ -260,12 +259,20 @@ function App(){
   const importData=e=>{
     const f=e.target.files[0]; if(!f)return;
     const r=new FileReader();
-    r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.col)saveCol(d.col);if(d.coll)saveColl(d.coll);}catch{alert('Invalid file');}};
+    r.onload=ev=>{
+      try{const d=JSON.parse(ev.target.result);if(d.col)saveCol(d.col);if(d.coll)saveColl(d.coll);}
+      catch{alert('Invalid file');}
+    };
     r.readAsText(f); e.target.value='';
   };
-  const resetAll=()=>{ if(!confirm('Reset all progress?'))return; saveCol({}); saveColl({}); };
+  const resetAll=()=>{if(!confirm('Reset all progress?'))return;saveCol({});saveColl({});};
 
-  if(!loaded)return <div style={{background:'#060e1a',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#22c55e',fontFamily:'monospace',fontSize:16}}>LOADING...</div>;
+  if(!loaded)return(
+    <div style={{background:'#060e1a',height:'100vh',display:'flex',alignItems:'center',
+      justifyContent:'center',color:'#22c55e',fontFamily:'monospace',fontSize:16}}>
+      LOADING...
+    </div>
+  );
 
   const totalSlots=LEVELS.reduce((s,l)=>s+l.s.length,0);
   const doneSlots=Object.values(col).filter(Boolean).length;
@@ -273,37 +280,27 @@ function App(){
   const nextNeeded=LEVELS.findIndex((_,li)=>!isDone(li));
   const nextLv=nextNeeded>=0?LEVELS[nextNeeded]:null;
 
-  /* Collapsed list: levels the user manually collapsed OR completed */
-  const collapsedList=LEVELS
-    .map((l,i)=>({l,i}))
-    .filter(({i})=>coll[i]||isDone(i));
-
-  /* Visible grid: not collapsed, matches search/filter */
-  const visible=LEVELS
-    .map((l,i)=>({l,i}))
-    .filter(({l,i})=>{
-      if(coll[i])return false;
-      if(filter==='needed'&&isDone(i))return false;
-      if(search){
-        const q=search.toLowerCase();
-        const matchSlot=l.s.some(s=>s.n.toLowerCase().includes(q));
-        const matchLv=`lv${l.from}`.includes(q)||`${l.from}→${l.to}`.includes(q)||`${l.from}-${l.to}`.includes(q);
-        if(!matchSlot&&!matchLv)return false;
-      }
-      return true;
-    });
+  const collapsedList=LEVELS.map((l,i)=>({l,i})).filter(({i})=>coll[i]||isDone(i));
+  const visible=LEVELS.map((l,i)=>({l,i})).filter(({l,i})=>{
+    if(coll[i])return false;
+    if(filter==='needed'&&isDone(i))return false;
+    if(search){
+      const q=search.toLowerCase();
+      if(!l.s.some(s=>s.n.toLowerCase().includes(q))&&
+         !`lv${l.from}`.includes(q)&&!`${l.from}→${l.to}`.includes(q))return false;
+    }
+    return true;
+  });
 
   return(
-    <div style={{background:'#060e1a',minHeight:'100vh',fontFamily:"system-ui,-apple-system,sans-serif",color:'#c9d1d9'}}>
+    <div style={{background:'#060e1a',minHeight:'100vh',fontFamily:"system-ui,-apple-system,sans-serif",color:'#cdd9e5'}}>
 
-      {/* ── HEADER ─────────────────────────────────────────────── */}
-      <div style={{background:'#0d1b2e',borderBottom:'1px solid #172540',
-        padding:'14px 20px',position:'sticky',top:0,zIndex:50,
-        boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
+      {/* ── HEADER ── */}
+      <div style={{background:'#0d1b2e',borderBottom:'1px solid #1a2d45',padding:'14px 20px',
+        position:'sticky',top:0,zIndex:50,boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
         <div style={{maxWidth:1100,margin:'0 auto'}}>
-          <h1 style={{margin:'0 0 2px',fontSize:24,fontWeight:900,
-            color:'#22c55e',letterSpacing:'.5px',
-            fontFamily:"'Courier New',monospace",
+          <h1 style={{margin:'0 0 2px',fontSize:24,fontWeight:900,color:'#22c55e',
+            letterSpacing:'.5px',fontFamily:"'Courier New',monospace",
             textShadow:'0 0 18px rgba(34,197,94,.35)'}}>
             BRAIN ROT REBIRTH TRACKER
           </h1>
@@ -313,7 +310,7 @@ function App(){
           <div style={{display:'flex',gap:7,flexWrap:'wrap',alignItems:'center'}}>
             <input value={search} onChange={e=>setSearch(e.target.value)}
               placeholder="Search character or level..."
-              style={{background:'#172540',border:'1px solid #243a55',color:'#c9d1d9',
+              style={{background:'#172540',border:'1px solid #243a55',color:'#cdd9e5',
                 padding:'6px 12px',borderRadius:7,fontSize:12,outline:'none',
                 width:210,fontFamily:'inherit'}}/>
             <HBtn active={filter==='needed'} onClick={()=>setFilter(filter==='needed'?'all':'needed')}>
@@ -330,21 +327,23 @@ function App(){
 
       <div style={{maxWidth:1100,margin:'0 auto',padding:'14px 18px'}}>
 
-        {/* ── STATS ──────────────────────────────────────────────── */}
-        <div style={{background:'#0d1b2e',border:'1px solid #172540',borderRadius:10,
+        {/* ── STATS ── */}
+        <div style={{background:'#0d1b2e',border:'1px solid #1a2d45',borderRadius:10,
           padding:'14px 22px',marginBottom:14,
           display:'flex',gap:36,alignItems:'center',flexWrap:'wrap'}}>
           <StatBlock val={`${doneSlots} / ${totalSlots}`} label="BRAIN ROTS COLLECTED"/>
           <StatBlock val={`${doneLevels} / 44`}           label="LEVELS COMPLETE"/>
-          {nextLv&&<StatBlock val={`LV ${nextLv.from}→${nextLv.to} (${slotsDone(nextNeeded)}/${nextLv.s.length})`}
+          {nextLv&&<StatBlock
+            val={`LV ${nextLv.from}→${nextLv.to} (${slotsDone(nextNeeded)}/${nextLv.s.length})`}
             label="NEXT LEVEL NEEDED" accent/>}
         </div>
 
-        {/* ── COLLAPSED PILLS ────────────────────────────────────── */}
+        {/* ── COLLAPSED PILLS ── */}
         {collapsedList.length>0&&(
-          <div style={{background:'#0d1b2e',border:'1px solid #172540',borderRadius:9,
+          <div style={{background:'#0d1b2e',border:'1px solid #1a2d45',borderRadius:9,
             padding:'10px 14px',marginBottom:14}}>
-            <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginBottom:8,fontFamily:'monospace',textTransform:'uppercase'}}>
+            <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginBottom:8,
+              fontFamily:'monospace',textTransform:'uppercase'}}>
               Hidden / Collapsed Levels — Click to bring one back
             </div>
             <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
@@ -364,29 +363,26 @@ function App(){
           </div>
         )}
 
-        {/* ── LEVEL GRID ─────────────────────────────────────────── */}
+        {/* ── LEVEL GRID ── */}
         <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
           {visible.map(({l,i})=>{
             const done=isDone(i);
             const isCur=i===nextNeeded;
             const sd=slotsDone(i);
             const expanded=!coll[i];
-
-            // Price color: green for M range, orange for B/G range, amber for T range
             const priceColor=l.p.includes('T')?'#f59e0b':l.p.includes('B')||l.p.includes('G')?'#fb923c':'#22c55e';
 
             return(
               <div key={i} style={{
                 background:'#0d1b2e',
-                border:`2px solid ${done?'#22c55e80':isCur?'#f9731680':'#172540'}`,
+                border:`2px solid ${done?'#22c55e80':isCur?'#f9731680':'#1a2d45'}`,
                 borderRadius:10,overflow:'hidden',
               }}>
-                {/* Card header */}
+                {/* Header */}
                 <div onClick={()=>toggleColl(i)} style={{
-                  padding:'11px 14px',cursor:'pointer',
+                  padding:'11px 14px',cursor:'pointer',userSelect:'none',
                   display:'flex',alignItems:'center',justifyContent:'space-between',
                   background:done?'rgba(34,197,94,.06)':isCur?'rgba(249,115,22,.06)':'transparent',
-                  userSelect:'none',
                 }}>
                   <span style={{fontWeight:800,fontSize:15,
                     color:done?'#22c55e':isCur?'#f97316':'#e6edf3',
@@ -395,22 +391,27 @@ function App(){
                   </span>
                   <div style={{display:'flex',alignItems:'center',gap:10}}>
                     <span style={{fontSize:13,fontWeight:700,color:priceColor}}>{l.p}</span>
-                    <span style={{color:'#7a90b0',fontSize:11,
-                      transform:expanded?'rotate(180deg)':'none',
-                      transition:'transform .2s',display:'inline-block'}}>▼</span>
+                    <span style={{color:'#7a90b0',fontSize:11,display:'inline-block',
+                      transform:expanded?'rotate(180deg)':'none',transition:'transform .2s'}}>▼</span>
                   </div>
                 </div>
 
-                {/* Expanded content */}
+                {/* Expanded */}
                 {expanded&&(
                   <div style={{padding:'10px 12px 12px',borderTop:'1px solid #13203a'}}>
-                    {/* ── Character cards: flex-nowrap so they ALWAYS stay in one row ── */}
-                    <div style={{display:'flex',gap:8,flexWrap:'nowrap',marginBottom:10}}>
+                    {/*
+                      ── CHARACTER CARD CONTAINER ────────────────────────────
+                      Cards are a FIXED 88px wide. Using flex-start so that a
+                      level with 1 card just shows one card on the left —
+                      no stretching to fill the row.
+                      ────────────────────────────────────────────────────── */}
+                    <div style={{display:'flex',gap:8,flexWrap:'wrap',
+                      justifyContent:'flex-start',marginBottom:10}}>
                       {l.s.map((slot,si)=>{
                         const held=!!col[`${i}-${si}`];
                         const rs=RS[slot.r]||RS.Common;
                         return <CharCard key={si} slot={slot} rs={rs} held={held}
-                          onClick={()=>toggle(i,si)}/>;
+                                 onClick={()=>toggle(i,si)}/>;
                       })}
                     </div>
                     {!done&&(
@@ -420,12 +421,7 @@ function App(){
                         border:'1px solid rgba(34,197,94,.2)',
                         borderRadius:7,color:'#7a90b0',cursor:'pointer',
                         fontSize:11,fontFamily:'inherit',
-                        transition:'all .15s',
-                      }}
-                      onMouseEnter={e=>{e.currentTarget.style.color='#22c55e';e.currentTarget.style.borderColor='rgba(34,197,94,.5)';}}
-                      onMouseLeave={e=>{e.currentTarget.style.color='#7a90b0';e.currentTarget.style.borderColor='rgba(34,197,94,.2)';}}>
-                        Mark level complete
-                      </button>
+                      }}>Mark level complete</button>
                     )}
                   </div>
                 )}
@@ -443,87 +439,101 @@ function App(){
   );
 }
 
-/* ── CHARACTER CARD ──────────────────────────────────────────────────────────
-   KEY: flex:1 on each card means they share available width equally and
-   NEVER wrap to a second row — 3 chars always fit side by side.
-   Aspect badge is a compact colored strip at the very top of the card.
+/* ── CHARACTER CARD ────────────────────────────────────────────────────────
+   THREE FIXES applied here:
+   1. FIXED width 88px — every card is the same size regardless of how many
+      characters are in the level. No flex-grow stretching.
+   2. IMAGE sizing — width:100% + height:auto on an 88px-wide card means the
+      image scales to exactly 88px wide and proportional height. No cutoff.
+   3. BRIGHTNESS — full color when NOT collected (filter:none), slightly
+      dimmed when collected (brightness 0.55 + checkmark overlay).
 ──────────────────────────────────────────────────────────────────────────── */
 function CharCard({slot,rs,held,onClick}){
   const asp=slot.a;
   return(
     <button onClick={onClick} style={{
-      flex:'1 1 0',         /* ← fills available width, never wraps */
-      minWidth:0,           /* ← allows shrinking below natural size  */
-      background:held?rs.bg:'#060e1a',
-      border:`2px solid ${held?rs.b:'#243a55'}`,
+      width:88,          /* ← FIXED: same size for every card always     */
+      flexShrink:0,      /* ← never shrink below 88px                    */
+      background:'#060e1a',
+      border:`2px solid ${held ? rs.b : rs.b+'50'}`,
       borderRadius:9,
       padding:0,
       cursor:'pointer',
       display:'flex',
       flexDirection:'column',
       alignItems:'stretch',
-      boxShadow:held?`0 0 10px ${rs.b}35`:'none',
+      boxShadow:held?`0 0 10px ${rs.b}40`:'none',
       transition:'border-color .12s, box-shadow .12s',
       position:'relative',
-      overflow:'visible',  /* nothing clips */
+      overflow:'hidden',   /* ← clips image neatly within the card */
     }}>
 
-      {/* Aspect badge — compact strip at top */}
-      {asp?(
+      {/* Aspect badge — compact colored strip at top */}
+      {asp&&(
         <div style={{
           background:AC[asp]||'#555',
-          color:'#fff',
-          fontSize:7,fontWeight:900,letterSpacing:1,
-          textAlign:'center',
+          color:'#fff',fontSize:7,fontWeight:900,
+          letterSpacing:1,textAlign:'center',
           padding:'3px 2px',
           borderRadius:'7px 7px 0 0',
           lineHeight:1,
+          flexShrink:0,
         }}>{asp}</div>
-      ):(
-        /* spacer so image top is consistent whether badge present or not */
-        <div style={{height:0}}/>
       )}
 
-      {/* Game screenshot image — width:100% so it fills the flex card */}
+      {/* Game image — scales to card width, never cut off */}
       <img src={IMGS[slot.i]} alt={slot.n} style={{
-        width:'100%',
-        height:'auto',
+        width:'100%',      /* ← fills the 88px card width exactly         */
+        height:'auto',     /* ← scales proportionally — no cutoff         */
         display:'block',
-        borderRadius: asp?'0':'7px 7px 0 0',
-        filter:held?'brightness(1.0)':'brightness(0.38) saturate(0.5)',
+        borderRadius:asp?0:'7px 7px 0 0',
+        /*
+         * FIX 3 — BRIGHTNESS:
+         * NOT collected → filter:none  (full color, easy to see)
+         * Collected     → brightness(0.55) (noticeably dimmed but still visible)
+         */
+        filter:held?'brightness(0.55)':'none',
         transition:'filter .12s',
       }}/>
 
-      {/* Name */}
+      {/* Character name */}
       <div style={{
         fontSize:9,fontWeight:600,
-        color:held?'#e6edf3':'#3a5070',
+        color:'#cdd9e5',
         textAlign:'center',
         padding:'3px 3px 1px',
         lineHeight:1.2,
         overflow:'hidden',
         textOverflow:'ellipsis',
         whiteSpace:'nowrap',
+        background:'#060e1a',
       }}>{slot.n}</div>
 
       {/* Rarity label */}
       <div style={{
         fontSize:8,fontWeight:700,letterSpacing:.8,
         textTransform:'uppercase',
-        color:held?rs.c:'#2a4060',
+        color:rs.c,
         textAlign:'center',
         paddingBottom:5,
+        background:'#060e1a',
       }}>{slot.r}</div>
 
-      {/* Collected checkmark overlay */}
+      {/* Collected overlay — green checkmark, shows on top of dimmed image */}
       {held&&(
         <div style={{
-          position:'absolute',top:0,left:0,right:0,bottom:0,
+          position:'absolute',top:0,left:0,right:0,
+          /* only cover the image area, not the name/rarity strip */
+          bottom:34,
           display:'flex',alignItems:'center',justifyContent:'center',
-          background:'rgba(0,0,0,.28)',borderRadius:7,
           pointerEvents:'none',
         }}>
-          <span style={{fontSize:26,color:rs.c,textShadow:`0 0 10px ${rs.c}`}}>✓</span>
+          <span style={{
+            fontSize:28,
+            color:rs.c,
+            textShadow:`0 0 10px ${rs.c}, 0 0 4px rgba(0,0,0,.8)`,
+            fontWeight:900,
+          }}>✓</span>
         </div>
       )}
     </button>
@@ -533,12 +543,14 @@ function CharCard({slot,rs,held,onClick}){
 function StatBlock({val,label,accent}){
   return(
     <div>
-      <div style={{fontSize:26,fontWeight:900,
+      <div style={{fontSize:26,fontWeight:900,lineHeight:1,
         color:accent?'#f97316':'#22c55e',
-        fontFamily:"'Courier New',monospace",lineHeight:1}}>
+        fontFamily:"'Courier New',monospace"}}>
         {val}
       </div>
-      <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginTop:3,textTransform:'uppercase'}}>{label}</div>
+      <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginTop:3,textTransform:'uppercase'}}>
+        {label}
+      </div>
     </div>
   );
 }
@@ -551,10 +563,11 @@ function HBtn({children,onClick,active,danger}){
       color:active?'#22c55e':danger?'#f87171':'#8fa8c8',
       padding:'6px 13px',borderRadius:7,cursor:'pointer',
       fontSize:11,fontFamily:'inherit',fontWeight:500,
-      whiteSpace:'nowrap',transition:'all .12s',
+      whiteSpace:'nowrap',
     }}>{children}</button>
   );
 }
+
     ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
   </script>
 </body>
