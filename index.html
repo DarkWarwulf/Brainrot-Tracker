@@ -182,8 +182,8 @@ const LEVELS = [
   {from:29,to:30,p:"30T",s:[{n:"Green Tiger",r:"Divine",i:"lv29_s0",a:null},{n:"Job USB",r:"Divine",i:"lv29_s1",a:"Dragon Rush"},{n:"Number 9 Girl",r:"Divine",i:"lv29_s2",a:null}]},
   {from:30,to:31,p:"35T",s:[{n:"Brown Monkey",r:"Divine",i:"lv30_s0",a:null},{n:"Scythe",r:"Divine",i:"lv30_s1",a:"Diamond"},{n:"Shovel",r:"Divine",i:"lv30_s2",a:"Cyber"}]},
   {from:31,to:32,p:"40T",s:[{n:"Mini Droids",r:"Divine",i:"lv31_s0",a:"Cyber"},{n:"Pink Plane",r:"Divine",i:"lv31_s1",a:"Fortune"},{n:"Job USB",r:"Divine",i:"lv31_s2",a:null}]},
-  {from:32,to:33,p:"45T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv32_s0",a:"Gold"},{n:"Green Tiger",r:"Divine",i:"lv32_s1",a:"Cyber"},{n:"Scythe",r:"Divine",i:"lv32_s2",a:null}]},
-  {from:33,to:34,p:"50T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv33_s0",a:"Diamond"},{n:"Tiger Beast",r:"Divine",i:"lv33_s1",a:"Bloodmoon"},{n:"Green Frog",r:"Divine",i:"lv33_s2",a:null}]},
+  {from:32,to:33,p:"45T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv32_s0",a:null},{n:"Green Tiger",r:"Divine",i:"lv32_s1",a:"Gold"},{n:"Scythe",r:"Divine",i:"lv32_s2",a:"Cyber"}]},
+  {from:33,to:34,p:"50T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv33_s0",a:null},{n:"Tiger Beast",r:"Divine",i:"lv33_s1",a:"Diamond"},{n:"Green Frog",r:"Divine",i:"lv33_s2",a:"Bloodmoon"}]},
   {from:34,to:35,p:"60T",s:[{n:"Green Frog",r:"Divine",i:"lv34_s0",a:"Dragon Rush"},{n:"Red Elephant",r:"Divine",i:"lv34_s1",a:"Yin Yang"},{n:"Number 9 Girl",r:"Divine",i:"lv34_s2",a:null}]},
   {from:35,to:36,p:"70T",s:[{n:"White Ghost",r:"Divine",i:"lv35_s0",a:null},{n:"Blue Divine",r:"Divine",i:"lv35_s1",a:null},{n:"Blue Duck",r:"Celestial",i:"lv35_s2",a:null}]},
   {from:36,to:37,p:"80T",s:[{n:"Blue Duck",r:"Celestial",i:"lv36_s0",a:null},{n:"Green Cactus",r:"Divine",i:"lv36_s1",a:null},{n:"Blue Sailor",r:"Celestial",i:"lv36_s2",a:null}]},
@@ -210,10 +210,16 @@ const RS = {
   Celestial: {c:"#fbbf24",b:"#fbbf24",bg:"#1a1404"},
 };
 const AC = {
-  "Dragon Rush":"#ef4444","Cyber":"#22c55e","Diamond":"#60a5fa",
-  "Bloodmoon":"#dc2626","Galaxy":"#a78bfa","Zombie":"#84cc16",
-  "Olympian":"#f59e0b","Gold":"#eab308","Fortune":"#fb923c",
-  "Yin Yang":"#e2e8f0",
+  "Dragon Rush": {bg:"#facc15", text:"#000"},  /* yellow, black text */
+  "Cyber":       {bg:"#f472b6", text:"#fff"},  /* pink, white text   */
+  "Diamond":     {bg:"#60a5fa", text:"#fff"},
+  "Bloodmoon":   {bg:"#dc2626", text:"#fff"},
+  "Galaxy":      {bg:"#a78bfa", text:"#fff"},
+  "Zombie":      {bg:"#84cc16", text:"#fff"},
+  "Olympian":    {bg:"#6b7280", text:"#22d3ee"}, /* grey, cyan text  */
+  "Gold":        {bg:"#92400e", text:"#fff"},  /* dark gold, white text */
+  "Fortune":     {bg:"#f97316", text:"#000"},  /* orange, black text */
+  "Yin Yang":    {bg:"#f8fafc", text:"#000"},  /* white, black text  */
 };
 
 const store = {
@@ -487,10 +493,11 @@ function CharCard({slot, rs, held, onClick}) {
       {/* Aspect badge */}
       {asp && (
         <div style={{
-          background: AC[asp] || '#555',
-          color:'#fff', fontSize:7, fontWeight:900,
-          letterSpacing:1, textAlign:'center',
-          padding:'3px 2px', borderRadius:'7px 7px 0 0',
+          background: (AC[asp]||{bg:'#555'}).bg,
+          color:      (AC[asp]||{text:'#fff'}).text,
+          fontSize:11, fontWeight:900,
+          letterSpacing:1.5, textAlign:'center',
+          padding:'5px 4px', borderRadius:'7px 7px 0 0',
           lineHeight:1, flexShrink:0,
         }}>{asp}</div>
       )}
@@ -501,17 +508,16 @@ function CharCard({slot, rs, held, onClick}) {
         filter: held ? 'brightness(0.55)' : 'none',
         transition:'filter .12s',
       }}/>
-      {/* Name */}
-      <div style={{fontSize:9, fontWeight:600, color:'#cdd9e5',
-        textAlign:'center', padding:'3px 3px 1px', lineHeight:1.2,
-        overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
-        background:'#060e1a'}}>
-        {slot.n}
-      </div>
+
       {/* Rarity */}
-      <div style={{fontSize:8, fontWeight:700, letterSpacing:.8,
+      <div style={{
+        fontSize:11, fontWeight:900, letterSpacing:1.5,
         textTransform:'uppercase', color:rs.c,
-        textAlign:'center', paddingBottom:5, background:'#060e1a'}}>
+        textAlign:'center',
+        padding:'4px 2px 6px',
+        background:'#060e1a',
+        textShadow:`0 0 8px ${rs.c}80`,
+      }}>
         {slot.r}
       </div>
       {/* Collected checkmark */}
