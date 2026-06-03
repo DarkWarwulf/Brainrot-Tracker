@@ -327,7 +327,7 @@ function App(){
       <div style={{background:'#0d1b2e', borderBottom:'1px solid #1a2d45',
         padding:'14px 20px', position:'sticky', top:0, zIndex:50,
         boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
-        <div style={{maxWidth:1100, margin:'0 auto'}}>
+        <div style={{}}>
           <h1 style={{margin:'0 0 2px', fontSize:24, fontWeight:900, color:'#22c55e',
             letterSpacing:'.5px', fontFamily:"'Courier New',monospace",
             textShadow:'0 0 18px rgba(34,197,94,.35)'}}>
@@ -357,7 +357,7 @@ function App(){
         </div>
       </div>
 
-      <div style={{maxWidth:1100, margin:'0 auto', padding:'14px 18px'}}>
+      <div style={{padding:'12px 14px'}}>
 
         {/* ── STATS ── */}
         <div style={{background:'#0d1b2e', border:'1px solid #1a2d45', borderRadius:10,
@@ -398,7 +398,7 @@ function App(){
         )}
 
         {/* ── LEVEL GRID ── */}
-        <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10}}>
           {visible.map(({l, i}) => {
             const done     = isDone(i);
             const isCur    = i === nextNeeded;
@@ -435,7 +435,7 @@ function App(){
                 {/* Expanded content */}
                 {expanded && (
                   <div style={{padding:'10px 12px 12px', borderTop:'1px solid #13203a'}}>
-                    <div style={{display:'flex', gap:8, flexWrap:'wrap',
+                    <div style={{display:'flex', gap:10, flexWrap:'wrap',
                       justifyContent:'flex-start', marginBottom:10}}>
                       {l.s.map((slot, si) => {
                         const held = !!col[`${i}-${si}`];
@@ -474,7 +474,7 @@ function CharCard({slot, rs, held, onClick}) {
   const asp = slot.a;
   return (
     <button onClick={onClick} style={{
-      width:88, flexShrink:0,
+      width:120, flexShrink:0,
       background:'#060e1a',
       border:`2px solid ${held ? rs.b : rs.b + '50'}`,
       borderRadius:9, padding:0, cursor:'pointer',
