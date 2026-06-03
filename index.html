@@ -8,18 +8,19 @@
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.9/babel.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { background: #0d1117; min-height: 100vh; }
-    input, button { font-family: inherit; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #161b22; }
-    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{background:#060e1a;min-height:100vh}
+    input,button{font-family:inherit}
+    img{max-width:100%;display:block}
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:#0d1b2e}
+    ::-webkit-scrollbar-thumb{background:#243a55;border-radius:3px}
   </style>
 </head>
 <body>
   <div id="root"></div>
 
-  <!-- Plain JS: image data + level data (no Babel needed, just object literals) -->
+  <!-- Image data + level data: plain JS, no Babel needed -->
   <script>
 const IMGS = {
   "lv00_s0":"data:image/jpeg;base64,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",
@@ -179,7 +180,7 @@ const LEVELS = [
   {from:28,to:29,p:"25T",s:[{n:"Camera Bot",r:"Divine",i:"lv28_s0",a:null},{n:"Tiger Beast",r:"Divine",i:"lv28_s1",a:"Cyber"},{n:"Yellow Lion",r:"Divine",i:"lv28_s2",a:null}]},
   {from:29,to:30,p:"30T",s:[{n:"Green Tiger",r:"Divine",i:"lv29_s0",a:null},{n:"Job USB",r:"Divine",i:"lv29_s1",a:"Dragon Rush"},{n:"Number 9 Girl",r:"Divine",i:"lv29_s2",a:null}]},
   {from:30,to:31,p:"35T",s:[{n:"Brown Monkey",r:"Divine",i:"lv30_s0",a:null},{n:"Scythe",r:"Divine",i:"lv30_s1",a:"Diamond"},{n:"Shovel",r:"Divine",i:"lv30_s2",a:"Cyber"}]},
-  {from:31,to:32,p:"40T",s:[{n:"Mini Droids",r:"Divine",i:"lv31_s0",a:"Fortune"},{n:"Pink Plane",r:"Divine",i:"lv31_s1",a:null},{n:"Job USB",r:"Divine",i:"lv31_s2",a:null}]},
+  {from:31,to:32,p:"40T",s:[{n:"Mini Droids",r:"Divine",i:"lv31_s0",a:"Cyber"},{n:"Pink Plane",r:"Divine",i:"lv31_s1",a:"Fortune"},{n:"Job USB",r:"Divine",i:"lv31_s2",a:null}]},
   {from:32,to:33,p:"45T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv32_s0",a:"Gold"},{n:"Green Tiger",r:"Divine",i:"lv32_s1",a:"Cyber"},{n:"Scythe",r:"Divine",i:"lv32_s2",a:null}]},
   {from:33,to:34,p:"50T",s:[{n:"Number 9 Girl",r:"Divine",i:"lv33_s0",a:"Diamond"},{n:"Tiger Beast",r:"Divine",i:"lv33_s1",a:"Bloodmoon"},{n:"Green Frog",r:"Divine",i:"lv33_s2",a:null}]},
   {from:34,to:35,p:"60T",s:[{n:"Green Frog",r:"Divine",i:"lv34_s0",a:"Dragon Rush"},{n:"Red Elephant",r:"Divine",i:"lv34_s1",a:"Yin Yang"},{n:"Number 9 Girl",r:"Divine",i:"lv34_s2",a:null}]},
@@ -195,276 +196,236 @@ const LEVELS = [
 ];
   </script>
 
-  <!-- React components: compiled by Babel (~30KB, well under 500KB limit) -->
+  <!-- React component code: only ~15KB, well under Babel 500KB limit -->
   <script type="text/babel" data-presets="react">
 const { useState, useEffect, useCallback, useRef } = React;
 
-
-const RARITY_STYLE = {
-  Common:    {color:"#4ade80",border:"#4ade80",dim:"#1a2f1a"},
-  Legendary: {color:"#f59e0b",border:"#f59e0b",dim:"#2a1f08"},
-  Mythical:  {color:"#d946ef",border:"#d946ef",dim:"#250a2a"},
-  Secret:    {color:"#f97316",border:"#f97316",dim:"#2a1208"},
-  Divine:    {color:"#22d3ee",border:"#22d3ee",dim:"#041a20"},
-  Celestial: {color:"#fbbf24",border:"#fbbf24",dim:"#201a05"},
+const RS = {
+  Common:    {c:"#4ade80",b:"#4ade80",bg:"#0f1f0f"},
+  Legendary: {c:"#f59e0b",b:"#f59e0b",bg:"#1f1508"},
+  Mythical:  {c:"#d946ef",b:"#d946ef",bg:"#1a0820"},
+  Secret:    {c:"#f97316",b:"#f97316",bg:"#1f0d04"},
+  Divine:    {c:"#22d3ee",b:"#22d3ee",bg:"#041418"},
+  Celestial: {c:"#fbbf24",b:"#fbbf24",bg:"#1a1404"},
 };
 
-const ASPECT_COLOR = {
+const AC = {
   "Dragon Rush":"#ef4444","Cyber":"#22c55e","Diamond":"#60a5fa",
   "Bloodmoon":"#dc2626","Galaxy":"#a78bfa","Zombie":"#84cc16",
   "Olympian":"#f59e0b","Gold":"#eab308","Fortune":"#fb923c",
-  "Yin Yang":"#f1f5f9",
+  "Yin Yang":"#e2e8f0",
 };
 
-const store = {
+/* ── Storage (localStorage, works everywhere) ─────────────────────────────── */
+const store={
   get(k){try{return localStorage.getItem(k);}catch{return null;}},
   set(k,v){try{localStorage.setItem(k,v);}catch{}}
 };
 
-function useProgress(){
-  const [col,setCol]=useState({});
-  const [collapsed,setCollapsed]=useState({});
-  const [loaded,setLoaded]=useState(false);
+function App(){
+  const [col,setCol]         = useState({});
+  const [coll,setColl]       = useState({});
+  const [loaded,setLoaded]   = useState(false);
+  const [search,setSearch]   = useState('');
+  const [filter,setFilter]   = useState('all');
+  const fileRef = useRef();
 
   useEffect(()=>{
     try{
-      const c=store.get('gvb4-col');
-      const cl=store.get('gvb4-coll');
-      if(c)setCol(JSON.parse(c));
-      if(cl)setCollapsed(JSON.parse(cl));
+      const c=store.get('gvb5-col');  const cl=store.get('gvb5-coll');
+      if(c)setCol(JSON.parse(c));     if(cl)setColl(JSON.parse(cl));
     }catch{}
     setLoaded(true);
   },[]);
 
-  const saveCol=useCallback((newCol)=>{
-    setCol(newCol);
-    store.set('gvb4-col',JSON.stringify(newCol));
-  },[]);
+  const saveCol=useCallback((v)=>{setCol(v);store.set('gvb5-col',JSON.stringify(v));},[]);
+  const saveColl=useCallback((v)=>{setColl(v);store.set('gvb5-coll',JSON.stringify(v));},[]);
 
-  const saveColl=useCallback((newColl)=>{
-    setCollapsed(newColl);
-    store.set('gvb4-coll',JSON.stringify(newColl));
-  },[]);
+  const isDone   = useCallback((li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`]),[col]);
+  const slotsDone= useCallback((li)=>LEVELS[li].s.filter((_,si)=>col[`${li}-${si}`]).length,[col]);
 
-  return{col,saveCol,collapsed,saveColl,loaded};
-}
+  const toggle=(li,si)=>saveCol({...col,[`${li}-${si}`]:!col[`${li}-${si}`]});
+  const markDone=(li)=>{
+    const nc={...col}; LEVELS[li].s.forEach((_,si)=>{nc[`${li}-${si}`]=true;});
+    saveCol(nc); saveColl({...coll,[li]:true});
+  };
+  const toggleColl=(li)=>saveColl({...coll,[li]:!coll[li]});
+  const unCollapse=(li)=>saveColl({...coll,[li]:false});
 
-function App(){
-  const {col,saveCol,collapsed,saveColl,loaded}=useProgress();
-  const [search,setSearch]=useState('');
-  const [filterMode,setFilterMode]=useState('all'); // 'all' | 'needed'
-  const fileRef=useRef();
+  const exportData=()=>{
+    const b=new Blob([JSON.stringify({col,coll},null,2)],{type:'application/json'});
+    const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:'brainrot-progress.json'});
+    a.click(); URL.revokeObjectURL(a.href);
+  };
+  const importData=e=>{
+    const f=e.target.files[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.col)saveCol(d.col);if(d.coll)saveColl(d.coll);}catch{alert('Invalid file');}};
+    r.readAsText(f); e.target.value='';
+  };
+  const resetAll=()=>{ if(!confirm('Reset all progress?'))return; saveCol({}); saveColl({}); };
 
-  if(!loaded)return(
-    <div style={{background:"#0d1117",height:"100vh",display:"flex",alignItems:"center",
-      justifyContent:"center",fontFamily:"monospace",color:"#22c55e",fontSize:16,letterSpacing:3}}>
-      LOADING...
-    </div>
-  );
+  if(!loaded)return <div style={{background:'#060e1a',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',color:'#22c55e',fontFamily:'monospace',fontSize:16}}>LOADING...</div>;
 
   const totalSlots=LEVELS.reduce((s,l)=>s+l.s.length,0);
   const doneSlots=Object.values(col).filter(Boolean).length;
-  const doneLevels=LEVELS.filter((_,li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`])).length;
-  const nextLevel=LEVELS.findIndex(l=>!l.s.every((_,si)=>col[`${l.from}-${si}`] || col[`${LEVELS.indexOf(l)}-${si}`]));
+  const doneLevels=LEVELS.filter((_,li)=>isDone(li)).length;
+  const nextNeeded=LEVELS.findIndex((_,li)=>!isDone(li));
+  const nextLv=nextNeeded>=0?LEVELS[nextNeeded]:null;
 
-  const toggleSlot=(li,si)=>{
-    const k=`${li}-${si}`;
-    saveCol({...col,[k]:!col[k]});
-  };
+  /* Collapsed list: levels the user manually collapsed OR completed */
+  const collapsedList=LEVELS
+    .map((l,i)=>({l,i}))
+    .filter(({i})=>coll[i]||isDone(i));
 
-  const markLevelComplete=(li)=>{
-    const nc={...col};
-    LEVELS[li].s.forEach((_,si)=>{ nc[`${li}-${si}`]=true; });
-    saveCol(nc);
-    const nc2={...collapsed,[li]:true};
-    saveColl(nc2);
-  };
-
-  const toggleCollapse=(li)=>{
-    saveColl({...collapsed,[li]:!collapsed[li]});
-  };
-
-  const isLevelDone=(li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`]);
-
-  // Find next needed level index
-  let nextNeeded=-1;
-  for(let i=0;i<LEVELS.length;i++){
-    if(!isLevelDone(i)){nextNeeded=i;break;}
-  }
-
-  const exportData=()=>{
-    const d=JSON.stringify({col,collapsed},null,2);
-    const b=new Blob([d],{type:'application/json'});
-    const u=URL.createObjectURL(b);
-    const a=document.createElement('a');
-    a.href=u;a.download='brainrot-progress.json';a.click();
-    URL.revokeObjectURL(u);
-  };
-
-  const importData=(e)=>{
-    const f=e.target.files[0];
-    if(!f)return;
-    const r=new FileReader();
-    r.onload=(ev)=>{
-      try{
-        const d=JSON.parse(ev.target.result);
-        if(d.col)saveCol(d.col);
-        if(d.collapsed)saveColl(d.collapsed);
-      }catch{alert('Invalid file');}
-    };
-    r.readAsText(f);
-    e.target.value='';
-  };
-
-  const resetAll=()=>{
-    if(!confirm('Reset all progress?'))return;
-    saveCol({});saveColl({});
-  };
-
-  // Filter levels for display
-  const collapsedLevels=LEVELS
-    .map((l,i)=>({l,i,done:isLevelDone(i),coll:collapsed[i]}))
-    .filter(x=>x.coll||x.done);
-
-  const visibleLevels=LEVELS
+  /* Visible grid: not collapsed, matches search/filter */
+  const visible=LEVELS
     .map((l,i)=>({l,i}))
     .filter(({l,i})=>{
-      if(collapsed[i]||isLevelDone(i)&&collapsed[i])return false;
-      // Collapsed
-      if(collapsed[i])return false;
-      const q=search.toLowerCase();
-      if(q){
+      if(coll[i])return false;
+      if(filter==='needed'&&isDone(i))return false;
+      if(search){
+        const q=search.toLowerCase();
         const matchSlot=l.s.some(s=>s.n.toLowerCase().includes(q));
-        const matchLv=`${l.from}→${l.to}`.includes(q)||`lv ${l.from}`.includes(q);
+        const matchLv=`lv${l.from}`.includes(q)||`${l.from}→${l.to}`.includes(q)||`${l.from}-${l.to}`.includes(q);
         if(!matchSlot&&!matchLv)return false;
       }
-      if(filterMode==='needed'&&isLevelDone(i))return false;
       return true;
     });
 
-  const nextLvl=nextNeeded>=0?LEVELS[nextNeeded]:null;
-
   return(
-    <div style={{background:"#0d1117",minHeight:"100vh",fontFamily:"system-ui,sans-serif",color:"#c9d1d9"}}>
-      {/* ─ HEADER ─ */}
-      <div style={{background:"#161b22",borderBottom:"1px solid #30363d",padding:"16px 20px",
-        position:"sticky",top:0,zIndex:100,boxShadow:"0 4px 20px rgba(0,0,0,.8)"}}>
-        <div style={{maxWidth:1200,margin:"0 auto"}}>
-          <h1 style={{margin:"0 0 4px",fontSize:26,fontWeight:900,
-            color:"#22c55e",letterSpacing:1,fontFamily:"'Courier New',monospace",
-            textShadow:"0 0 20px rgba(34,197,94,.4)"}}>
+    <div style={{background:'#060e1a',minHeight:'100vh',fontFamily:"system-ui,-apple-system,sans-serif",color:'#c9d1d9'}}>
+
+      {/* ── HEADER ─────────────────────────────────────────────── */}
+      <div style={{background:'#0d1b2e',borderBottom:'1px solid #172540',
+        padding:'14px 20px',position:'sticky',top:0,zIndex:50,
+        boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
+        <div style={{maxWidth:1100,margin:'0 auto'}}>
+          <h1 style={{margin:'0 0 2px',fontSize:24,fontWeight:900,
+            color:'#22c55e',letterSpacing:'.5px',
+            fontFamily:"'Courier New',monospace",
+            textShadow:'0 0 18px rgba(34,197,94,.35)'}}>
             BRAIN ROT REBIRTH TRACKER
           </h1>
-          <p style={{margin:"0 0 12px",fontSize:12,color:"#8b949e"}}>
+          <p style={{margin:'0 0 10px',fontSize:11,color:'#7a90b0'}}>
             Tap each brain rot you have. Greyed-out = collected, lit-up = still needed. Collapse finished levels to stay focused.
           </p>
-          {/* Controls */}
-          <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+          <div style={{display:'flex',gap:7,flexWrap:'wrap',alignItems:'center'}}>
             <input value={search} onChange={e=>setSearch(e.target.value)}
               placeholder="Search character or level..."
-              style={{background:"#21262d",border:"1px solid #30363d",color:"#c9d1d9",
-                padding:"7px 14px",borderRadius:8,fontSize:13,outline:"none",
-                width:220,fontFamily:"inherit"}}/>
-            <Btn active={filterMode==='needed'} onClick={()=>setFilterMode(filterMode==='needed'?'all':'needed')}>
+              style={{background:'#172540',border:'1px solid #243a55',color:'#c9d1d9',
+                padding:'6px 12px',borderRadius:7,fontSize:12,outline:'none',
+                width:210,fontFamily:'inherit'}}/>
+            <HBtn active={filter==='needed'} onClick={()=>setFilter(filter==='needed'?'all':'needed')}>
               Show only levels I still need
-            </Btn>
-            <Btn onClick={()=>setFilterMode('all')}>Show all</Btn>
-            <Btn onClick={exportData}>Export my progress</Btn>
-            <Btn onClick={()=>fileRef.current.click()}>Import progress</Btn>
-            <Btn danger onClick={resetAll}>Reset all</Btn>
-            <input type="file" accept=".json" ref={fileRef} onChange={importData} style={{display:"none"}}/>
+            </HBtn>
+            <HBtn onClick={()=>setFilter('all')}>Show all</HBtn>
+            <HBtn onClick={exportData}>Export my progress</HBtn>
+            <HBtn onClick={()=>fileRef.current.click()}>Import progress</HBtn>
+            <HBtn danger onClick={resetAll}>Reset all</HBtn>
+            <input type="file" accept=".json" ref={fileRef} onChange={importData} style={{display:'none'}}/>
           </div>
         </div>
       </div>
 
-      <div style={{maxWidth:1200,margin:"0 auto",padding:"16px 20px"}}>
-        {/* ─ STATS ─ */}
-        <div style={{background:"#161b22",border:"1px solid #30363d",borderRadius:12,
-          padding:"16px 24px",marginBottom:16,display:"flex",gap:40,flexWrap:"wrap",alignItems:"center"}}>
-          <Stat num={`${doneSlots} / ${totalSlots}`} label="BRAIN ROTS COLLECTED" color="#22c55e"/>
-          <Stat num={`${doneLevels} / 44`} label="LEVELS COMPLETE" color="#22c55e"/>
-          {nextLvl&&(
-            <Stat num={`LV ${nextLvl.from}→${nextLvl.to} (${LEVELS[nextNeeded].s.filter((_,si)=>col[`${nextNeeded}-${si}`]).length}/${nextLvl.s.length})`}
-              label="NEXT LEVEL NEEDED" color="#f97316"/>
-          )}
+      <div style={{maxWidth:1100,margin:'0 auto',padding:'14px 18px'}}>
+
+        {/* ── STATS ──────────────────────────────────────────────── */}
+        <div style={{background:'#0d1b2e',border:'1px solid #172540',borderRadius:10,
+          padding:'14px 22px',marginBottom:14,
+          display:'flex',gap:36,alignItems:'center',flexWrap:'wrap'}}>
+          <StatBlock val={`${doneSlots} / ${totalSlots}`} label="BRAIN ROTS COLLECTED"/>
+          <StatBlock val={`${doneLevels} / 44`}           label="LEVELS COMPLETE"/>
+          {nextLv&&<StatBlock val={`LV ${nextLv.from}→${nextLv.to} (${slotsDone(nextNeeded)}/${nextLv.s.length})`}
+            label="NEXT LEVEL NEEDED" accent/>}
         </div>
 
-        {/* ─ COLLAPSED PILLS ─ */}
-        {collapsedLevels.length>0&&(
-          <div style={{background:"#161b22",border:"1px solid #30363d",borderRadius:10,
-            padding:"12px 16px",marginBottom:16}}>
-            <div style={{fontSize:10,color:"#8b949e",letterSpacing:2,marginBottom:10,fontFamily:"monospace"}}>
-              HIDDEN / COLLAPSED LEVELS — CLICK TO BRING ONE BACK
+        {/* ── COLLAPSED PILLS ────────────────────────────────────── */}
+        {collapsedList.length>0&&(
+          <div style={{background:'#0d1b2e',border:'1px solid #172540',borderRadius:9,
+            padding:'10px 14px',marginBottom:14}}>
+            <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginBottom:8,fontFamily:'monospace',textTransform:'uppercase'}}>
+              Hidden / Collapsed Levels — Click to bring one back
             </div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
-              {collapsedLevels.map(({l,i,done})=>(
-                <button key={i} onClick={()=>toggleCollapse(i)} style={{
-                  background:"#21262d",border:`1px solid ${done?"#22c55e60":"#30363d"}`,
-                  color:done?"#22c55e":"#8b949e",borderRadius:20,
-                  padding:"4px 12px",cursor:"pointer",fontSize:12,fontFamily:"inherit",
-                  display:"flex",alignItems:"center",gap:6}}>
-                  {done&&<span style={{color:"#22c55e",fontSize:10}}>●</span>}
-                  Lv {l.from}→{l.to} ({l.s.filter((_,si)=>col[`${i}-${si}`]).length}/{l.s.length}) ↩
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {collapsedList.map(({l,i})=>(
+                <button key={i} onClick={()=>unCollapse(i)} style={{
+                  background:'#172540',
+                  border:`1px solid ${isDone(i)?'#22c55e60':'#243a55'}`,
+                  color:isDone(i)?'#22c55e':'#7a90b0',
+                  borderRadius:20,padding:'3px 11px',cursor:'pointer',
+                  fontSize:11,fontFamily:'inherit',
+                  display:'flex',alignItems:'center',gap:5}}>
+                  {isDone(i)&&<span style={{fontSize:8,color:'#22c55e'}}>●</span>}
+                  Lv {l.from}→{l.to} ({slotsDone(i)}/{l.s.length}) ↩
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* ─ LEVEL GRID ─ */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
-          {visibleLevels.map(({l,i})=>{
-            const done=isLevelDone(i);
+        {/* ── LEVEL GRID ─────────────────────────────────────────── */}
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+          {visible.map(({l,i})=>{
+            const done=isDone(i);
             const isCur=i===nextNeeded;
-            const slotsDone=l.s.filter((_,si)=>col[`${i}-${si}`]).length;
-            const isExp=!collapsed[i];
+            const sd=slotsDone(i);
+            const expanded=!coll[i];
+
+            // Price color: green for M range, orange for B/G range, amber for T range
+            const priceColor=l.p.includes('T')?'#f59e0b':l.p.includes('B')||l.p.includes('G')?'#fb923c':'#22c55e';
 
             return(
               <div key={i} style={{
-                background:"#161b22",
-                border:`2px solid ${done?"#22c55e":isCur?"#f97316":"#30363d"}`,
-                borderRadius:12,overflow:"hidden",
+                background:'#0d1b2e',
+                border:`2px solid ${done?'#22c55e80':isCur?'#f9731680':'#172540'}`,
+                borderRadius:10,overflow:'hidden',
               }}>
-                {/* Card Header */}
-                <div onClick={()=>toggleCollapse(i)} style={{
-                  padding:"12px 16px",cursor:"pointer",
-                  display:"flex",alignItems:"center",justifyContent:"space-between",
-                  background:done?"rgba(34,197,94,.08)":isCur?"rgba(249,115,22,.08)":"transparent",
+                {/* Card header */}
+                <div onClick={()=>toggleColl(i)} style={{
+                  padding:'11px 14px',cursor:'pointer',
+                  display:'flex',alignItems:'center',justifyContent:'space-between',
+                  background:done?'rgba(34,197,94,.06)':isCur?'rgba(249,115,22,.06)':'transparent',
+                  userSelect:'none',
                 }}>
-                  <span style={{fontWeight:800,fontSize:16,letterSpacing:.5,
-                    color:done?"#22c55e":isCur?"#f97316":"#e6edf3",fontFamily:"'Courier New',monospace"}}>
+                  <span style={{fontWeight:800,fontSize:15,
+                    color:done?'#22c55e':isCur?'#f97316':'#e6edf3',
+                    fontFamily:"'Courier New',monospace",letterSpacing:.3}}>
                     LV {l.from} → {l.to}
                   </span>
-                  <div style={{display:"flex",alignItems:"center",gap:10}}>
-                    <span style={{fontSize:14,fontWeight:700,color:
-                      done?"#22c55e":l.p.includes("T")?"#f59e0b":l.p.includes("B")||l.p.includes("G")?"#fb923c":"#22c55e"}}>
-                      {l.p}
-                    </span>
-                    <span style={{color:"#8b949e",fontSize:12,transform:isExp?"rotate(180deg)":"none",transition:"transform .2s"}}>▼</span>
+                  <div style={{display:'flex',alignItems:'center',gap:10}}>
+                    <span style={{fontSize:13,fontWeight:700,color:priceColor}}>{l.p}</span>
+                    <span style={{color:'#7a90b0',fontSize:11,
+                      transform:expanded?'rotate(180deg)':'none',
+                      transition:'transform .2s',display:'inline-block'}}>▼</span>
                   </div>
                 </div>
 
-                {/* Expanded Content */}
-                {isExp&&(
-                  <div style={{padding:"12px 16px 14px",borderTop:"1px solid #21262d"}}>
-                    <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:12}}>
+                {/* Expanded content */}
+                {expanded&&(
+                  <div style={{padding:'10px 12px 12px',borderTop:'1px solid #13203a'}}>
+                    {/* ── Character cards: flex-nowrap so they ALWAYS stay in one row ── */}
+                    <div style={{display:'flex',gap:8,flexWrap:'nowrap',marginBottom:10}}>
                       {l.s.map((slot,si)=>{
-                        const isHeld=!!col[`${i}-${si}`];
-                        const rs=RARITY_STYLE[slot.r]||RARITY_STYLE.Common;
-                        return(
-                          <CharCard key={si} slot={slot} rs={rs} isHeld={isHeld}
-                            onClick={()=>toggleSlot(i,si)}/>
-                        );
+                        const held=!!col[`${i}-${si}`];
+                        const rs=RS[slot.r]||RS.Common;
+                        return <CharCard key={si} slot={slot} rs={rs} held={held}
+                          onClick={()=>toggle(i,si)}/>;
                       })}
                     </div>
                     {!done&&(
-                      <button onClick={()=>markLevelComplete(i)} style={{
-                        width:"100%",padding:"8px",
-                        background:"rgba(34,197,94,.08)",
-                        border:"1px solid rgba(34,197,94,.3)",
-                        borderRadius:8,color:"#8b949e",cursor:"pointer",
-                        fontSize:12,fontFamily:"inherit",
-                      }}>Mark level complete</button>
+                      <button onClick={()=>markDone(i)} style={{
+                        width:'100%',padding:'7px',
+                        background:'rgba(34,197,94,.06)',
+                        border:'1px solid rgba(34,197,94,.2)',
+                        borderRadius:7,color:'#7a90b0',cursor:'pointer',
+                        fontSize:11,fontFamily:'inherit',
+                        transition:'all .15s',
+                      }}
+                      onMouseEnter={e=>{e.currentTarget.style.color='#22c55e';e.currentTarget.style.borderColor='rgba(34,197,94,.5)';}}
+                      onMouseLeave={e=>{e.currentTarget.style.color='#7a90b0';e.currentTarget.style.borderColor='rgba(34,197,94,.2)';}}>
+                        Mark level complete
+                      </button>
                     )}
                   </div>
                 )}
@@ -473,103 +434,128 @@ function App(){
           })}
         </div>
 
-        <p style={{textAlign:"center",fontSize:12,color:"#484f58",marginTop:24,lineHeight:1.8}}>
+        <p style={{textAlign:'center',color:'#3a5070',fontSize:11,marginTop:20,lineHeight:1.8}}>
           Click a tile to toggle a brain rot. Use the ▼ button on a level to collapse it; "Mark level complete" collapses it too.<br/>
-          Progress saves automatically in this browser. Use <strong style={{color:"#22c55e"}}>Export</strong> to back it up or move it to another device.
+          Progress saves automatically in this browser. Use <strong style={{color:'#22c55e'}}>Export</strong> to back it up or move it to another device, and <strong style={{color:'#22c55e'}}>Import</strong> to load it back.
         </p>
       </div>
     </div>
   );
 }
 
-/* ─ CHARACTER CARD ─────────────────────────────────────────────
-   Shows the actual game image with:
-   • Aspect type badge (full-width bar at top, if applicable)
-   • Game screenshot image (natural aspect ratio, not stretched)
-   • Character name below
-   • Rarity label below name
-   Grey/dim when not yet collected, full color when collected
-──────────────────────────────────────────────────────────────── */
-function CharCard({slot,rs,isHeld,onClick}){
+/* ── CHARACTER CARD ──────────────────────────────────────────────────────────
+   KEY: flex:1 on each card means they share available width equally and
+   NEVER wrap to a second row — 3 chars always fit side by side.
+   Aspect badge is a compact colored strip at the very top of the card.
+──────────────────────────────────────────────────────────────────────────── */
+function CharCard({slot,rs,held,onClick}){
   const asp=slot.a;
   return(
     <button onClick={onClick} style={{
-      background:isHeld?rs.dim:"#21262d",
-      border:`2px solid ${isHeld?rs.border:"#30363d"}`,
-      borderRadius:10,cursor:"pointer",
-      width:108,padding:0,
-      display:"flex",flexDirection:"column",alignItems:"stretch",
-      boxShadow:isHeld?`0 0 14px ${rs.border}40`:"none",
-      transition:"all .15s",position:"relative",
+      flex:'1 1 0',         /* ← fills available width, never wraps */
+      minWidth:0,           /* ← allows shrinking below natural size  */
+      background:held?rs.bg:'#060e1a',
+      border:`2px solid ${held?rs.b:'#243a55'}`,
+      borderRadius:9,
+      padding:0,
+      cursor:'pointer',
+      display:'flex',
+      flexDirection:'column',
+      alignItems:'stretch',
+      boxShadow:held?`0 0 10px ${rs.b}35`:'none',
+      transition:'border-color .12s, box-shadow .12s',
+      position:'relative',
+      overflow:'visible',  /* nothing clips */
     }}>
-      {/* ASPECT TYPE BANNER */}
-      {asp&&(
+
+      {/* Aspect badge — compact strip at top */}
+      {asp?(
         <div style={{
-          background:ASPECT_COLOR[asp]||"#555",
-          color:"#fff",fontSize:8,fontWeight:900,
-          letterSpacing:1.5,textAlign:"center",
-          padding:"4px 0",borderRadius:"8px 8px 0 0",
-          textShadow:"0 1px 3px rgba(0,0,0,.8)",
-        }}>{asp.toUpperCase()}</div>
+          background:AC[asp]||'#555',
+          color:'#fff',
+          fontSize:7,fontWeight:900,letterSpacing:1,
+          textAlign:'center',
+          padding:'3px 2px',
+          borderRadius:'7px 7px 0 0',
+          lineHeight:1,
+        }}>{asp}</div>
+      ):(
+        /* spacer so image top is consistent whether badge present or not */
+        <div style={{height:0}}/>
       )}
-      {/* GAME IMAGE */}
-      <img src={IMGS[slot.i]} alt={slot.n}
-        style={{
-          width:"100%",height:"auto",display:"block",
-          borderRadius:asp?"0":"6px 6px 0 0",
-          filter:isHeld?"brightness(1.0)":"brightness(0.4) grayscale(0.3)",
-          transition:"filter .15s",
-        }}
-      />
-      {/* NAME */}
+
+      {/* Game screenshot image — width:100% so it fills the flex card */}
+      <img src={IMGS[slot.i]} alt={slot.n} style={{
+        width:'100%',
+        height:'auto',
+        display:'block',
+        borderRadius: asp?'0':'7px 7px 0 0',
+        filter:held?'brightness(1.0)':'brightness(0.38) saturate(0.5)',
+        transition:'filter .12s',
+      }}/>
+
+      {/* Name */}
       <div style={{
-        fontSize:10,color:isHeld?"#e6edf3":"#484f58",
-        textAlign:"center",padding:"4px 4px 2px",
-        fontWeight:600,lineHeight:1.2,
+        fontSize:9,fontWeight:600,
+        color:held?'#e6edf3':'#3a5070',
+        textAlign:'center',
+        padding:'3px 3px 1px',
+        lineHeight:1.2,
+        overflow:'hidden',
+        textOverflow:'ellipsis',
+        whiteSpace:'nowrap',
       }}>{slot.n}</div>
-      {/* RARITY */}
+
+      {/* Rarity label */}
       <div style={{
-        fontSize:9,color:isHeld?rs.color:"#484f58",
-        textAlign:"center",paddingBottom:6,
-        fontWeight:700,letterSpacing:1,
-        textTransform:"uppercase",
+        fontSize:8,fontWeight:700,letterSpacing:.8,
+        textTransform:'uppercase',
+        color:held?rs.c:'#2a4060',
+        textAlign:'center',
+        paddingBottom:5,
       }}>{slot.r}</div>
-      {/* COLLECTED OVERLAY */}
-      {isHeld&&(
-        <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,
-          display:"flex",alignItems:"center",justifyContent:"center",
-          background:"rgba(0,0,0,.3)",borderRadius:8,pointerEvents:"none"}}>
-          <span style={{fontSize:32,color:rs.color,textShadow:`0 0 12px ${rs.color}`}}>✓</span>
+
+      {/* Collected checkmark overlay */}
+      {held&&(
+        <div style={{
+          position:'absolute',top:0,left:0,right:0,bottom:0,
+          display:'flex',alignItems:'center',justifyContent:'center',
+          background:'rgba(0,0,0,.28)',borderRadius:7,
+          pointerEvents:'none',
+        }}>
+          <span style={{fontSize:26,color:rs.c,textShadow:`0 0 10px ${rs.c}`}}>✓</span>
         </div>
       )}
     </button>
   );
 }
 
-function Stat({num,label,color}){
+function StatBlock({val,label,accent}){
   return(
     <div>
-      <div style={{fontSize:28,fontWeight:900,color,fontFamily:"'Courier New',monospace"}}>{num}</div>
-      <div style={{fontSize:10,color:"#8b949e",letterSpacing:2}}>{label}</div>
+      <div style={{fontSize:26,fontWeight:900,
+        color:accent?'#f97316':'#22c55e',
+        fontFamily:"'Courier New',monospace",lineHeight:1}}>
+        {val}
+      </div>
+      <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginTop:3,textTransform:'uppercase'}}>{label}</div>
     </div>
   );
 }
 
-function Btn({children,onClick,active,danger}){
+function HBtn({children,onClick,active,danger}){
   return(
     <button onClick={onClick} style={{
-      background:active?"rgba(34,197,94,.15)":danger?"rgba(239,68,68,.08)":"#21262d",
-      border:`1px solid ${active?"rgba(34,197,94,.5)":danger?"rgba(239,68,68,.3)":"#30363d"}`,
-      color:active?"#22c55e":danger?"#f87171":"#8b949e",
-      padding:"7px 14px",borderRadius:8,cursor:"pointer",
-      fontSize:12,fontFamily:"inherit",fontWeight:500,
-      whiteSpace:"nowrap",
+      background:active?'rgba(34,197,94,.12)':danger?'rgba(239,68,68,.07)':'#172540',
+      border:`1px solid ${active?'rgba(34,197,94,.45)':danger?'rgba(239,68,68,.3)':'#243a55'}`,
+      color:active?'#22c55e':danger?'#f87171':'#8fa8c8',
+      padding:'6px 13px',borderRadius:7,cursor:'pointer',
+      fontSize:11,fontFamily:'inherit',fontWeight:500,
+      whiteSpace:'nowrap',transition:'all .12s',
     }}>{children}</button>
   );
 }
-    const container = document.getElementById('root');
-    const root = ReactDOM.createRoot(container);
-    root.render(React.createElement(App));
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
   </script>
 </body>
 </html>
