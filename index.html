@@ -196,7 +196,7 @@ const LEVELS = [
 ];
   </script>
 
-    <!-- React component code: only ~15KB, well under Babel 500KB limit -->
+    <!-- React component code -->
   <script type="text/babel" data-presets="react">
 const { useState, useEffect, useCallback, useRef } = React;
 
@@ -208,7 +208,6 @@ const RS = {
   Divine:    {c:"#22d3ee",b:"#22d3ee",bg:"#041418"},
   Celestial: {c:"#fbbf24",b:"#fbbf24",bg:"#1a1404"},
 };
-
 const AC = {
   "Dragon Rush":"#ef4444","Cyber":"#22c55e","Diamond":"#60a5fa",
   "Bloodmoon":"#dc2626","Galaxy":"#a78bfa","Zombie":"#84cc16",
@@ -216,146 +215,181 @@ const AC = {
   "Yin Yang":"#e2e8f0",
 };
 
-const store={
-  get(k){try{return localStorage.getItem(k);}catch{return null;}},
-  set(k,v){try{localStorage.setItem(k,v);}catch{}}
+const store = {
+  get(k)  { try { return localStorage.getItem(k);            } catch { return null; } },
+  set(k,v){ try { localStorage.setItem(k, v);                } catch {} },
 };
 
 function App(){
-  const [col,setCol]       = useState({});
-  const [coll,setColl]     = useState({});
-  const [loaded,setLoaded] = useState(false);
-  const [search,setSearch] = useState('');
-  const [filter,setFilter] = useState('all');
+  const [col,    setCol]    = useState({});
+  const [coll,   setColl]   = useState({});  // collapsed levels
+  const [loaded, setLoaded] = useState(false);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState('all');
   const fileRef = useRef();
 
-  useEffect(()=>{
-    try{
-      const c=store.get('gvb5-col');  const cl=store.get('gvb5-coll');
-      if(c)setCol(JSON.parse(c));     if(cl)setColl(JSON.parse(cl));
-    }catch{}
+  useEffect(() => {
+    try {
+      const c  = store.get('gvb5-col');
+      const cl = store.get('gvb5-coll');
+      if (c)  setCol( JSON.parse(c));
+      if (cl) setColl(JSON.parse(cl));
+    } catch {}
     setLoaded(true);
-  },[]);
+  }, []);
 
-  const saveCol =useCallback((v)=>{setCol(v); store.set('gvb5-col', JSON.stringify(v));},[]);
-  const saveColl=useCallback((v)=>{setColl(v);store.set('gvb5-coll',JSON.stringify(v));},[]);
+  const saveCol  = useCallback(v => { setCol(v);  store.set('gvb5-col',  JSON.stringify(v)); }, []);
+  const saveColl = useCallback(v => { setColl(v); store.set('gvb5-coll', JSON.stringify(v)); }, []);
 
-  const isDone   =useCallback((li)=>LEVELS[li].s.every((_,si)=>col[`${li}-${si}`]),[col]);
-  const slotsDone=useCallback((li)=>LEVELS[li].s.filter((_,si)=>col[`${li}-${si}`]).length,[col]);
+  const isDone    = useCallback(li => LEVELS[li].s.every((_,si) => col[`${li}-${si}`]), [col]);
+  const slotsDone = useCallback(li => LEVELS[li].s.filter((_,si) => col[`${li}-${si}`]).length, [col]);
 
-  const toggle=(li,si)=>saveCol({...col,[`${li}-${si}`]:!col[`${li}-${si}`]});
-  const markDone=(li)=>{
-    const nc={...col}; LEVELS[li].s.forEach((_,si)=>{nc[`${li}-${si}`]=true;});
-    saveCol(nc); saveColl({...coll,[li]:true});
+  const toggle  = (li, si) => saveCol({ ...col, [`${li}-${si}`]: !col[`${li}-${si}`] });
+  const markDone = li => {
+    const nc = { ...col };
+    LEVELS[li].s.forEach((_, si) => { nc[`${li}-${si}`] = true; });
+    saveCol(nc);
+    saveColl({ ...coll, [li]: true });
   };
-  const toggleColl=(li)=>saveColl({...coll,[li]:!coll[li]});
-  const unCollapse=(li)=>saveColl({...coll,[li]:false});
+  const collapseLevel  = li => saveColl({ ...coll, [li]: true  });
+  const unCollapse     = li => saveColl({ ...coll, [li]: false });
 
-  const exportData=()=>{
-    const b=new Blob([JSON.stringify({col,coll},null,2)],{type:'application/json'});
-    const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(b),download:'brainrot-progress.json'});
-    a.click(); URL.revokeObjectURL(a.href);
+  /* ── SHOW ALL: clears every collapsed state so everything reappears ── */
+  const showAll = () => {
+    setFilter('all');
+    saveColl({});   // un-collapse every level → they all return to the grid
   };
-  const importData=e=>{
-    const f=e.target.files[0]; if(!f)return;
-    const r=new FileReader();
-    r.onload=ev=>{
-      try{const d=JSON.parse(ev.target.result);if(d.col)saveCol(d.col);if(d.coll)saveColl(d.coll);}
-      catch{alert('Invalid file');}
+
+  const exportData = () => {
+    const b = new Blob([JSON.stringify({col, coll}, null, 2)], {type:'application/json'});
+    const a = Object.assign(document.createElement('a'),
+      {href: URL.createObjectURL(b), download:'brainrot-progress.json'});
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const importData = e => {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = ev => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        if (d.col)  saveCol(d.col);
+        if (d.coll) saveColl(d.coll);
+      } catch { alert('Invalid file'); }
     };
-    r.readAsText(f); e.target.value='';
+    r.readAsText(f);
+    e.target.value = '';
   };
-  const resetAll=()=>{if(!confirm('Reset all progress?'))return;saveCol({});saveColl({});};
+  const resetAll = () => {
+    if (!confirm('Reset all progress?')) return;
+    saveCol({});
+    saveColl({});
+  };
 
-  if(!loaded)return(
+  if (!loaded) return (
     <div style={{background:'#060e1a',height:'100vh',display:'flex',alignItems:'center',
       justifyContent:'center',color:'#22c55e',fontFamily:'monospace',fontSize:16}}>
       LOADING...
     </div>
   );
 
-  const totalSlots=LEVELS.reduce((s,l)=>s+l.s.length,0);
-  const doneSlots=Object.values(col).filter(Boolean).length;
-  const doneLevels=LEVELS.filter((_,li)=>isDone(li)).length;
-  const nextNeeded=LEVELS.findIndex((_,li)=>!isDone(li));
-  const nextLv=nextNeeded>=0?LEVELS[nextNeeded]:null;
+  const totalSlots  = LEVELS.reduce((s, l) => s + l.s.length, 0);
+  const doneSlots   = Object.values(col).filter(Boolean).length;
+  const doneLevels  = LEVELS.filter((_, li) => isDone(li)).length;
+  const nextNeeded  = LEVELS.findIndex((_, li) => !isDone(li));
+  const nextLv      = nextNeeded >= 0 ? LEVELS[nextNeeded] : null;
 
-  const collapsedList=LEVELS.map((l,i)=>({l,i})).filter(({i})=>coll[i]||isDone(i));
-  const visible=LEVELS.map((l,i)=>({l,i})).filter(({l,i})=>{
-    if(coll[i] && filter!=='all')return false;
-    if(filter==='needed'&&isDone(i))return false;
-    if(search){
-      const q=search.toLowerCase();
-      if(!l.s.some(s=>s.n.toLowerCase().includes(q))&&
-         !`lv${l.from}`.includes(q)&&!`${l.from}→${l.to}`.includes(q))return false;
-    }
-    return true;
-  });
+  /* Collapsed pills: only levels explicitly in coll (not just isDone) */
+  const collapsedList = LEVELS
+    .map((l, i) => ({l, i}))
+    .filter(({i}) => coll[i]);
 
-  return(
-    <div style={{background:'#060e1a',minHeight:'100vh',fontFamily:"system-ui,-apple-system,sans-serif",color:'#cdd9e5'}}>
+  /* Visible grid: anything not collapsed, respecting filter & search */
+  const visible = LEVELS
+    .map((l, i) => ({l, i}))
+    .filter(({l, i}) => {
+      if (coll[i]) return false;                         // collapsed → pills, not grid
+      if (filter === 'needed' && isDone(i)) return false; // 'needed' mode → hide done
+      if (search) {
+        const q = search.toLowerCase();
+        if (!l.s.some(s => s.n.toLowerCase().includes(q)) &&
+            !`lv${l.from}`.includes(q) &&
+            !`${l.from}→${l.to}`.includes(q)) return false;
+      }
+      return true;
+    });
+
+  return (
+    <div style={{background:'#060e1a', minHeight:'100vh',
+      fontFamily:"system-ui,-apple-system,sans-serif", color:'#cdd9e5'}}>
 
       {/* ── HEADER ── */}
-      <div style={{background:'#0d1b2e',borderBottom:'1px solid #1a2d45',padding:'14px 20px',
-        position:'sticky',top:0,zIndex:50,boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
-        <div style={{maxWidth:1100,margin:'0 auto'}}>
-          <h1 style={{margin:'0 0 2px',fontSize:24,fontWeight:900,color:'#22c55e',
-            letterSpacing:'.5px',fontFamily:"'Courier New',monospace",
+      <div style={{background:'#0d1b2e', borderBottom:'1px solid #1a2d45',
+        padding:'14px 20px', position:'sticky', top:0, zIndex:50,
+        boxShadow:'0 2px 16px rgba(0,0,0,.7)'}}>
+        <div style={{maxWidth:1100, margin:'0 auto'}}>
+          <h1 style={{margin:'0 0 2px', fontSize:24, fontWeight:900, color:'#22c55e',
+            letterSpacing:'.5px', fontFamily:"'Courier New',monospace",
             textShadow:'0 0 18px rgba(34,197,94,.35)'}}>
             BRAIN ROT REBIRTH TRACKER
           </h1>
-          <p style={{margin:'0 0 10px',fontSize:11,color:'#7a90b0'}}>
+          <p style={{margin:'0 0 10px', fontSize:11, color:'#7a90b0'}}>
             Tap each brain rot you have. Greyed-out = collected, lit-up = still needed. Collapse finished levels to stay focused.
           </p>
-          <div style={{display:'flex',gap:7,flexWrap:'wrap',alignItems:'center'}}>
-            <input value={search} onChange={e=>setSearch(e.target.value)}
+          <div style={{display:'flex', gap:7, flexWrap:'wrap', alignItems:'center'}}>
+            <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Search character or level..."
-              style={{background:'#172540',border:'1px solid #243a55',color:'#cdd9e5',
-                padding:'6px 12px',borderRadius:7,fontSize:12,outline:'none',
-                width:210,fontFamily:'inherit'}}/>
-            <HBtn active={filter==='needed'} onClick={()=>setFilter(filter==='needed'?'all':'needed')}>
+              style={{background:'#172540', border:'1px solid #243a55', color:'#cdd9e5',
+                padding:'6px 12px', borderRadius:7, fontSize:12, outline:'none',
+                width:210, fontFamily:'inherit'}}/>
+            <HBtn active={filter === 'needed'}
+              onClick={() => setFilter(filter === 'needed' ? 'all' : 'needed')}>
               Show only levels I still need
             </HBtn>
-            <HBtn onClick={()=>setFilter('all')}>Show all</HBtn>
+            {/* Show all: clears collapsed state so every level reappears */}
+            <HBtn onClick={showAll}>Show all</HBtn>
             <HBtn onClick={exportData}>Export my progress</HBtn>
-            <HBtn onClick={()=>fileRef.current.click()}>Import progress</HBtn>
+            <HBtn onClick={() => fileRef.current.click()}>Import progress</HBtn>
             <HBtn danger onClick={resetAll}>Reset all</HBtn>
-            <input type="file" accept=".json" ref={fileRef} onChange={importData} style={{display:'none'}}/>
+            <input type="file" accept=".json" ref={fileRef}
+              onChange={importData} style={{display:'none'}}/>
           </div>
         </div>
       </div>
 
-      <div style={{maxWidth:1100,margin:'0 auto',padding:'14px 18px'}}>
+      <div style={{maxWidth:1100, margin:'0 auto', padding:'14px 18px'}}>
 
         {/* ── STATS ── */}
-        <div style={{background:'#0d1b2e',border:'1px solid #1a2d45',borderRadius:10,
-          padding:'14px 22px',marginBottom:14,
-          display:'flex',gap:36,alignItems:'center',flexWrap:'wrap'}}>
+        <div style={{background:'#0d1b2e', border:'1px solid #1a2d45', borderRadius:10,
+          padding:'14px 22px', marginBottom:14,
+          display:'flex', gap:36, alignItems:'center', flexWrap:'wrap'}}>
           <StatBlock val={`${doneSlots} / ${totalSlots}`} label="BRAIN ROTS COLLECTED"/>
           <StatBlock val={`${doneLevels} / 44`}           label="LEVELS COMPLETE"/>
-          {nextLv&&<StatBlock
-            val={`LV ${nextLv.from}→${nextLv.to} (${slotsDone(nextNeeded)}/${nextLv.s.length})`}
-            label="NEXT LEVEL NEEDED" accent/>}
+          {nextLv && (
+            <StatBlock
+              val={`LV ${nextLv.from}→${nextLv.to} (${slotsDone(nextNeeded)}/${nextLv.s.length})`}
+              label="NEXT LEVEL NEEDED" accent/>
+          )}
         </div>
 
         {/* ── COLLAPSED PILLS ── */}
-        {collapsedList.length>0&&(
-          <div style={{background:'#0d1b2e',border:'1px solid #1a2d45',borderRadius:9,
-            padding:'10px 14px',marginBottom:14}}>
-            <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginBottom:8,
-              fontFamily:'monospace',textTransform:'uppercase'}}>
+        {collapsedList.length > 0 && (
+          <div style={{background:'#0d1b2e', border:'1px solid #1a2d45', borderRadius:9,
+            padding:'10px 14px', marginBottom:14}}>
+            <div style={{fontSize:9, color:'#7a90b0', letterSpacing:2, marginBottom:8,
+              fontFamily:'monospace', textTransform:'uppercase'}}>
               Hidden / Collapsed Levels — Click to bring one back
             </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
-              {collapsedList.map(({l,i})=>(
-                <button key={i} onClick={()=>unCollapse(i)} style={{
+            <div style={{display:'flex', flexWrap:'wrap', gap:6}}>
+              {collapsedList.map(({l, i}) => (
+                <button key={i} onClick={() => unCollapse(i)} style={{
                   background:'#172540',
-                  border:`1px solid ${isDone(i)?'#22c55e60':'#243a55'}`,
-                  color:isDone(i)?'#22c55e':'#7a90b0',
-                  borderRadius:20,padding:'3px 11px',cursor:'pointer',
-                  fontSize:11,fontFamily:'inherit',
-                  display:'flex',alignItems:'center',gap:5}}>
-                  {isDone(i)&&<span style={{fontSize:8,color:'#22c55e'}}>●</span>}
+                  border:`1px solid ${isDone(i) ? '#22c55e60' : '#243a55'}`,
+                  color: isDone(i) ? '#22c55e' : '#7a90b0',
+                  borderRadius:20, padding:'3px 11px', cursor:'pointer',
+                  fontSize:11, fontFamily:'inherit',
+                  display:'flex', alignItems:'center', gap:5}}>
+                  {isDone(i) && <span style={{fontSize:8, color:'#22c55e'}}>●</span>}
                   Lv {l.from}→{l.to} ({slotsDone(i)}/{l.s.length}) ↩
                 </button>
               ))}
@@ -364,63 +398,59 @@ function App(){
         )}
 
         {/* ── LEVEL GRID ── */}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
-          {visible.map(({l,i})=>{
-            const done=isDone(i);
-            const isCur=i===nextNeeded;
-            const sd=slotsDone(i);
-            const expanded=!coll[i];
-            const priceColor=l.p.includes('T')?'#f59e0b':l.p.includes('B')||l.p.includes('G')?'#fb923c':'#22c55e';
-
-            return(
+        <div style={{display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12}}>
+          {visible.map(({l, i}) => {
+            const done     = isDone(i);
+            const isCur    = i === nextNeeded;
+            const sd       = slotsDone(i);
+            const expanded = !coll[i];
+            const priceColor = l.p.includes('T') ? '#f59e0b'
+                             : l.p.includes('B') || l.p.includes('G') ? '#fb923c'
+                             : '#22c55e';
+            return (
               <div key={i} style={{
                 background:'#0d1b2e',
-                border:`2px solid ${done?'#22c55e80':isCur?'#f9731680':'#1a2d45'}`,
-                borderRadius:10,overflow:'hidden',
+                border:`2px solid ${done ? '#22c55e80' : isCur ? '#f9731680' : '#1a2d45'}`,
+                borderRadius:10, overflow:'hidden',
               }}>
-                {/* Header */}
-                <div onClick={()=>toggleColl(i)} style={{
-                  padding:'11px 14px',cursor:'pointer',userSelect:'none',
-                  display:'flex',alignItems:'center',justifyContent:'space-between',
-                  background:done?'rgba(34,197,94,.06)':isCur?'rgba(249,115,22,.06)':'transparent',
+                {/* Card header — click to collapse */}
+                <div onClick={() => collapseLevel(i)} style={{
+                  padding:'11px 14px', cursor:'pointer', userSelect:'none',
+                  display:'flex', alignItems:'center', justifyContent:'space-between',
+                  background: done ? 'rgba(34,197,94,.06)' : isCur ? 'rgba(249,115,22,.06)' : 'transparent',
                 }}>
-                  <span style={{fontWeight:800,fontSize:15,
-                    color:done?'#22c55e':isCur?'#f97316':'#e6edf3',
-                    fontFamily:"'Courier New',monospace",letterSpacing:.3}}>
+                  <span style={{fontWeight:800, fontSize:15,
+                    color: done ? '#22c55e' : isCur ? '#f97316' : '#e6edf3',
+                    fontFamily:"'Courier New',monospace", letterSpacing:.3}}>
                     LV {l.from} → {l.to}
                   </span>
-                  <div style={{display:'flex',alignItems:'center',gap:10}}>
-                    <span style={{fontSize:13,fontWeight:700,color:priceColor}}>{l.p}</span>
-                    <span style={{color:'#7a90b0',fontSize:11,display:'inline-block',
-                      transform:expanded?'rotate(180deg)':'none',transition:'transform .2s'}}>▼</span>
+                  <div style={{display:'flex', alignItems:'center', gap:10}}>
+                    <span style={{fontSize:13, fontWeight:700, color:priceColor}}>{l.p}</span>
+                    <span style={{color:'#7a90b0', fontSize:11, display:'inline-block',
+                      transform: expanded ? 'rotate(180deg)' : 'none',
+                      transition:'transform .2s'}}>▼</span>
                   </div>
                 </div>
 
-                {/* Expanded */}
-                {expanded&&(
-                  <div style={{padding:'10px 12px 12px',borderTop:'1px solid #13203a'}}>
-                    {/*
-                      ── CHARACTER CARD CONTAINER ────────────────────────────
-                      Cards are a FIXED 88px wide. Using flex-start so that a
-                      level with 1 card just shows one card on the left —
-                      no stretching to fill the row.
-                      ────────────────────────────────────────────────────── */}
-                    <div style={{display:'flex',gap:8,flexWrap:'wrap',
-                      justifyContent:'flex-start',marginBottom:10}}>
-                      {l.s.map((slot,si)=>{
-                        const held=!!col[`${i}-${si}`];
-                        const rs=RS[slot.r]||RS.Common;
+                {/* Expanded content */}
+                {expanded && (
+                  <div style={{padding:'10px 12px 12px', borderTop:'1px solid #13203a'}}>
+                    <div style={{display:'flex', gap:8, flexWrap:'wrap',
+                      justifyContent:'flex-start', marginBottom:10}}>
+                      {l.s.map((slot, si) => {
+                        const held = !!col[`${i}-${si}`];
+                        const rs   = RS[slot.r] || RS.Common;
                         return <CharCard key={si} slot={slot} rs={rs} held={held}
-                                 onClick={()=>toggle(i,si)}/>;
+                                 onClick={() => toggle(i, si)}/>;
                       })}
                     </div>
-                    {!done&&(
-                      <button onClick={()=>markDone(i)} style={{
-                        width:'100%',padding:'7px',
+                    {!done && (
+                      <button onClick={() => markDone(i)} style={{
+                        width:'100%', padding:'7px',
                         background:'rgba(34,197,94,.06)',
                         border:'1px solid rgba(34,197,94,.2)',
-                        borderRadius:7,color:'#7a90b0',cursor:'pointer',
-                        fontSize:11,fontFamily:'inherit',
+                        borderRadius:7, color:'#7a90b0', cursor:'pointer',
+                        fontSize:11, fontFamily:'inherit',
                       }}>Mark level complete</button>
                     )}
                   </div>
@@ -430,139 +460,101 @@ function App(){
           })}
         </div>
 
-        <p style={{textAlign:'center',color:'#3a5070',fontSize:11,marginTop:20,lineHeight:1.8}}>
+        <p style={{textAlign:'center', color:'#3a5070', fontSize:11, marginTop:20, lineHeight:1.8}}>
           Click a tile to toggle a brain rot. Use the ▼ button on a level to collapse it; "Mark level complete" collapses it too.<br/>
-          Progress saves automatically in this browser. Use <strong style={{color:'#22c55e'}}>Export</strong> to back it up or move it to another device, and <strong style={{color:'#22c55e'}}>Import</strong> to load it back.
+          Progress saves automatically in this browser. Use <strong style={{color:'#22c55e'}}>Export</strong> to back it up, and <strong style={{color:'#22c55e'}}>Import</strong> to load it back.
         </p>
       </div>
     </div>
   );
 }
 
-/* ── CHARACTER CARD ────────────────────────────────────────────────────────
-   THREE FIXES applied here:
-   1. FIXED width 88px — every card is the same size regardless of how many
-      characters are in the level. No flex-grow stretching.
-   2. IMAGE sizing — width:100% + height:auto on an 88px-wide card means the
-      image scales to exactly 88px wide and proportional height. No cutoff.
-   3. BRIGHTNESS — full color when NOT collected (filter:none), slightly
-      dimmed when collected (brightness 0.55 + checkmark overlay).
-──────────────────────────────────────────────────────────────────────────── */
-function CharCard({slot,rs,held,onClick}){
-  const asp=slot.a;
-  return(
+/* ── CHARACTER CARD ─────────────────────────────────────────────────────── */
+function CharCard({slot, rs, held, onClick}) {
+  const asp = slot.a;
+  return (
     <button onClick={onClick} style={{
-      width:88,          /* ← FIXED: same size for every card always     */
-      flexShrink:0,      /* ← never shrink below 88px                    */
+      width:88, flexShrink:0,
       background:'#060e1a',
-      border:`2px solid ${held ? rs.b : rs.b+'50'}`,
-      borderRadius:9,
-      padding:0,
-      cursor:'pointer',
-      display:'flex',
-      flexDirection:'column',
-      alignItems:'stretch',
-      boxShadow:held?`0 0 10px ${rs.b}40`:'none',
+      border:`2px solid ${held ? rs.b : rs.b + '50'}`,
+      borderRadius:9, padding:0, cursor:'pointer',
+      display:'flex', flexDirection:'column', alignItems:'stretch',
+      boxShadow: held ? `0 0 10px ${rs.b}40` : 'none',
       transition:'border-color .12s, box-shadow .12s',
-      position:'relative',
-      overflow:'hidden',   /* ← clips image neatly within the card */
+      position:'relative', overflow:'hidden',
     }}>
-
-      {/* Aspect badge — compact colored strip at top */}
-      {asp&&(
+      {/* Aspect badge */}
+      {asp && (
         <div style={{
-          background:AC[asp]||'#555',
-          color:'#fff',fontSize:7,fontWeight:900,
-          letterSpacing:1,textAlign:'center',
-          padding:'3px 2px',
-          borderRadius:'7px 7px 0 0',
-          lineHeight:1,
-          flexShrink:0,
+          background: AC[asp] || '#555',
+          color:'#fff', fontSize:7, fontWeight:900,
+          letterSpacing:1, textAlign:'center',
+          padding:'3px 2px', borderRadius:'7px 7px 0 0',
+          lineHeight:1, flexShrink:0,
         }}>{asp}</div>
       )}
-
-      {/* Game image — scales to card width, never cut off */}
+      {/* Image — full color when NOT collected, dimmed when collected */}
       <img src={IMGS[slot.i]} alt={slot.n} style={{
-        width:'100%',      /* ← fills the 88px card width exactly         */
-        height:'auto',     /* ← scales proportionally — no cutoff         */
-        display:'block',
-        borderRadius:asp?0:'7px 7px 0 0',
-        /*
-         * FIX 3 — BRIGHTNESS:
-         * NOT collected → filter:none  (full color, easy to see)
-         * Collected     → brightness(0.55) (noticeably dimmed but still visible)
-         */
-        filter:held?'brightness(0.55)':'none',
+        width:'100%', height:'auto', display:'block',
+        borderRadius: asp ? 0 : '7px 7px 0 0',
+        filter: held ? 'brightness(0.55)' : 'none',
         transition:'filter .12s',
       }}/>
-
-      {/* Character name */}
-      <div style={{
-        fontSize:9,fontWeight:600,
-        color:'#cdd9e5',
-        textAlign:'center',
-        padding:'3px 3px 1px',
-        lineHeight:1.2,
-        overflow:'hidden',
-        textOverflow:'ellipsis',
-        whiteSpace:'nowrap',
-        background:'#060e1a',
-      }}>{slot.n}</div>
-
-      {/* Rarity label */}
-      <div style={{
-        fontSize:8,fontWeight:700,letterSpacing:.8,
-        textTransform:'uppercase',
-        color:rs.c,
-        textAlign:'center',
-        paddingBottom:5,
-        background:'#060e1a',
-      }}>{slot.r}</div>
-
-      {/* Collected overlay — green checkmark, shows on top of dimmed image */}
-      {held&&(
+      {/* Name */}
+      <div style={{fontSize:9, fontWeight:600, color:'#cdd9e5',
+        textAlign:'center', padding:'3px 3px 1px', lineHeight:1.2,
+        overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap',
+        background:'#060e1a'}}>
+        {slot.n}
+      </div>
+      {/* Rarity */}
+      <div style={{fontSize:8, fontWeight:700, letterSpacing:.8,
+        textTransform:'uppercase', color:rs.c,
+        textAlign:'center', paddingBottom:5, background:'#060e1a'}}>
+        {slot.r}
+      </div>
+      {/* Collected checkmark */}
+      {held && (
         <div style={{
-          position:'absolute',top:0,left:0,right:0,
-          /* only cover the image area, not the name/rarity strip */
-          bottom:34,
-          display:'flex',alignItems:'center',justifyContent:'center',
+          position:'absolute', top:0, left:0, right:0, bottom:34,
+          display:'flex', alignItems:'center', justifyContent:'center',
           pointerEvents:'none',
         }}>
-          <span style={{
-            fontSize:28,
-            color:rs.c,
+          <span style={{fontSize:28, color:rs.c,
             textShadow:`0 0 10px ${rs.c}, 0 0 4px rgba(0,0,0,.8)`,
-            fontWeight:900,
-          }}>✓</span>
+            fontWeight:900}}>✓</span>
         </div>
       )}
     </button>
   );
 }
 
-function StatBlock({val,label,accent}){
-  return(
+function StatBlock({val, label, accent}) {
+  return (
     <div>
-      <div style={{fontSize:26,fontWeight:900,lineHeight:1,
-        color:accent?'#f97316':'#22c55e',
+      <div style={{fontSize:26, fontWeight:900, lineHeight:1,
+        color: accent ? '#f97316' : '#22c55e',
         fontFamily:"'Courier New',monospace"}}>
         {val}
       </div>
-      <div style={{fontSize:9,color:'#7a90b0',letterSpacing:2,marginTop:3,textTransform:'uppercase'}}>
+      <div style={{fontSize:9, color:'#7a90b0', letterSpacing:2,
+        marginTop:3, textTransform:'uppercase'}}>
         {label}
       </div>
     </div>
   );
 }
 
-function HBtn({children,onClick,active,danger}){
-  return(
+function HBtn({children, onClick, active, danger}) {
+  return (
     <button onClick={onClick} style={{
-      background:active?'rgba(34,197,94,.12)':danger?'rgba(239,68,68,.07)':'#172540',
-      border:`1px solid ${active?'rgba(34,197,94,.45)':danger?'rgba(239,68,68,.3)':'#243a55'}`,
-      color:active?'#22c55e':danger?'#f87171':'#8fa8c8',
-      padding:'6px 13px',borderRadius:7,cursor:'pointer',
-      fontSize:11,fontFamily:'inherit',fontWeight:500,
+      background: active  ? 'rgba(34,197,94,.12)' :
+                  danger  ? 'rgba(239,68,68,.07)'  : '#172540',
+      border: `1px solid ${active ? 'rgba(34,197,94,.45)' :
+                            danger ? 'rgba(239,68,68,.3)'  : '#243a55'}`,
+      color:  active ? '#22c55e' : danger ? '#f87171' : '#8fa8c8',
+      padding:'6px 13px', borderRadius:7, cursor:'pointer',
+      fontSize:11, fontFamily:'inherit', fontWeight:500,
       whiteSpace:'nowrap',
     }}>{children}</button>
   );
