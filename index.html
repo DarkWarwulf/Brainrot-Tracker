@@ -282,7 +282,7 @@ function App(){
 
   const collapsedList=LEVELS.map((l,i)=>({l,i})).filter(({i})=>coll[i]||isDone(i));
   const visible=LEVELS.map((l,i)=>({l,i})).filter(({l,i})=>{
-    if(coll[i])return false;
+    if(coll[i] && filter!=='all')return false;
     if(filter==='needed'&&isDone(i))return false;
     if(search){
       const q=search.toLowerCase();
